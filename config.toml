@@ -1,0 +1,4 @@
+baseURL = "https://jeremyrickard.github.io/"
+languageCode = "en-us"
+title = "jeremy rickard"
+theme = "pickles"

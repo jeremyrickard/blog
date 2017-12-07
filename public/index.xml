@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>jeremy rickard</title>
+    <link>https://jeremyrickard.github.io/</link>
+    <description>Recent content on jeremy rickard</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 07 Dec 2017 15:50:12 -0700</lastBuildDate>
+    
+	<atom:link href="https://jeremyrickard.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>New Beginnings and a Tale of Two Factors</title>
+      <link>https://jeremyrickard.github.io/posts/new-beginnings/</link>
+      <pubDate>Thu, 07 Dec 2017 15:50:12 -0700</pubDate>
+      
+      <guid>https://jeremyrickard.github.io/posts/new-beginnings/</guid>
+      <description>I&amp;rsquo;m wrapping up 2017 with an exciting new job at Microsoft working on the super cool Azure Container Service. I really enjoyed my four years at VMware. I worked on really cool stuff and I worked with some really great people. So why make the change? I had reached a point where I felt like I was ready to do something different and I saw a really intersting job posting on Twitter.</description>
+    </item>
+    
+  </channel>
+</rss>
