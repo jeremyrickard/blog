@@ -21,6 +21,7 @@ $ cd ~/projects
 $ mkdir -p brigade/src/github.com/Azure
 $ cd brigade/src/github.com/Azure
 $ git clone https://github.com/Azure/brigade.git
+$ cd brigade
 $ export GOPATH=~/projects/brigade/
 $ export GOBIN=$GOPATH/bin
 $ export PATH=$GOBIN:$PATH
