@@ -253,6 +253,8 @@ spec:
 <p>After you created that, you&rsquo;d also need to create one for the binding. Your second option is a domain specific CLI called <a href="https://github.com/kubernetes-incubator/service-catalog/tree/master/cmd/svcat">svcat</a>. svcat brings a lot of that user experience from CF to service catalog. To get the plans and classes, you can simply run <code>svcat get plans</code>. Here is some sample output from svcat with Service Catalog configured with OSBA.</p>
 
 <pre><code class="language-console">$ svcat get plans
+               NAME                          CLASS                      DESCRIPTION                             UUID
++---------------------------------+--------------------------+--------------------------------+--------------------------------------+
 premium                           azure-rediscache           Premium Tier, 6GB Cache          b1057a8f-9a01-423a-bc35-e168d5c04cf0
   basic                             azure-rediscache           Basic Tier, 250MB Cache          362b3d1b-5b57-4289-80ad-4a15a760c29c
   standard                          azure-rediscache           Standard Tier, 1GB Cache         4af8bbd1-962d-4e26-84f1-f72d1d959d87

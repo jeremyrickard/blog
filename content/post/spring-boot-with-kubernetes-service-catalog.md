@@ -76,7 +76,7 @@ svcat also brings along other helpful commands, like `provision` and `bind`, whi
 
 To create my DocumentDB instance with `svcat`, I ran the following command.
 
-```
+```console
 $ svcat provision osba-documentdb --class  azure-cosmos-document-db --plan document-db -p location=eastus
 Name:        osba-documentdb
   Namespace:  default
@@ -89,7 +89,7 @@ I can then view the status with `svcat` like so.
 
 
 ```console
- svcat get instances
+$ svcat get instances
             NAME              NAMESPACE              CLASS                PLAN          STATUS
 +--------------------------+--------------+--------------------------+-------------+--------------+
   osba-documentdb   osba-example   azure-cosmos-document-db   document-db   Provisioning
@@ -99,7 +99,7 @@ I can then view the status with `svcat` like so.
 Almost all brokers will do an asynchronous provision operation, and OSBA is no different. You see the status here provided as `Provisioning`. After a few minutes, it should be finished if all went well.
 
 ```console 
-svcat get instances
+$ svcat get instances
             NAME              NAMESPACE              CLASS                PLAN       STATUS
 +--------------------------+--------------+--------------------------+-------------+--------+
   osba-documentdb   default   azure-cosmos-document-db   document-db   Ready
