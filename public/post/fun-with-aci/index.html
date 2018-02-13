@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="generator" content="Hugo 0.31.1" />
+
+  <title>Fun With ACI &middot; jeremy doing things</title>
+
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-old-ie-min.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  <!--<![endif]-->
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="/css/side-menu.css">
+  <!--<![endif]-->
+
+  <link rel="stylesheet" href="/css/blackburn.css">
+
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+
+  
+  
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/androidstudio.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/bash.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+  <link rel="shortcut icon" href="https://jeremyrickard.github.io/img/favicon.ico" type="image/x-icon" />
+
+  
+  
+
+</head>
+
+
+<body>
+<div id="layout">
+
+  
+<a href="#menu" id="menuLink" class="menu-link">
+  
+  <span></span>
+</a>
+<div id="menu">
+
+  
+
+  <div class="pure-menu">
+    <ul class="pure-menu-list">
+      
+    </ul>
+  </div>
+
+  <div class="pure-menu social">
+  <ul class="pure-menu-list">
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://twitter.com/jrrickard" target="_blank"><i class="fa fa-twitter-square fa-fw"></i>Twitter</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://github.com/jeremyrickard" target="_blank"><i class="fa fa-github-square fa-fw"></i>GitHub</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+  </ul>
+</div>
+
+
+  <div>
+  <div class="small-print">
+    <small></small>
+  </div>
+  <div class="small-print">
+    <small>Built with&nbsp;<a href="https://gohugo.io/" target="_blank">Hugo</a></small>
+    <small>Theme&nbsp;<a href="https://github.com/yoshiharuyamashita/blackburn" target="_blank">Blackburn</a></small>
+  </div>
+</div>
+
+</div>
+
+
+  <div id="main">
+
+
+<div class="header">
+  <h1>Fun With ACI</h1>
+  <h2></h2>
+</div>
+<div class="content">
+
+  <div class="post-meta">
+
+  <div>
+    <i class="fa fa-calendar fa-fw"></i>
+    <time>09 Feb 2018, 21:53</time>
+  </div>
+
+  
+
+  
+
+  
+
+</div>
+
+  <p>Friday is usually a pretty good day. It&rsquo;s the end of the week and the Azure Containers team has a show and tell with fun demos and people share rants. Today there were also bunch of jokes about <a href="https://en.wikipedia.org/wiki/Office_Assistant">clippy</a> which resulted in a bunch of hilarious art from <a href="http://textart.io/cowsay/clippy">http://textart.io/cowsay/clippy</a>. Such as&hellip;</p>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">.<a href="https://twitter.com/arschles?ref_src=twsrc%5Etfw">@arschles</a> is my hero 🤣 <a href="https://t.co/LfYXmde3DE">pic.twitter.com/LfYXmde3DE</a></p>&mdash; jessie frazelle (@jessfraz) <a href="https://twitter.com/jessfraz/status/962034432541519873?ref_src=twsrc%5Etfw">February 9, 2018</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>Then there were jokes that we needed a bot&hellip;.And that we should run it on <a href="https://azure.microsoft.com/en-us/services/container-instances/">ACI</a>.</p>
+
+<p>That felt like a good joke and an excuse to use ACI&hellip;so with the help of the super useful <a href="https://github.com/nlopes/slack">nlopes/slack</a> library, I made <a href="https://github.com/jeremyrickard/clippy-bot">one</a> right before I left to pick up my son from school.</p>
+
+<p><img src="/images/aci/hey.png" alt="heyyyyy" /></p>
+
+<p>So, you want to run a Slack bot (or anything in a container&hellip;) somewhere. ACI makes it SUPER easy.</p>
+
+<p>Step 0. Make sure you have the <a href="https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest">az cli</a> installed.</p>
+
+<p>Step 1. Make a resource group (if you want a special one..i like them so I did).</p>
+
+<pre><code>az group create --name clippy --location eastus  
+</code></pre>
+
+<p>Step 2. Push your container somewhere</p>
+
+<pre><code>git clone https://github.com/jeremyrickard/clippy-bot
+docker build -t .
+docker tag clippy-bot jeremyrickard/clippy-bot
+docker push jeremyrickard/clippy-bot
+</code></pre>
+
+<p>Step 3. Run your container in ACI!</p>
+
+<pre><code>az container create \
+   --memory .5 \
+   --resource-group clippy --name clippy \
+   --image jeremyrickard/clippy-bot \
+   -e API_KEY={SLACK_API_KEY} BOT_USER={BOT_USER} KEY_WORD={TRIGGER PHRASE}
+</code></pre>
+
+<p>Step 4. Check the status and wait for the container to start</p>
+
+<pre><code>$az container show --resource-group clippy --name clippy -o table
+Name    ResourceGroup    ProvisioningState    Image                     CPU/Memory       OsType    Location
+------  ---------------  -------------------  ------------------------  ---------------  --------  ----------
+clippy  clippy           Succeeded            jeremyrickard/clippy-bot  1.0 core/0.5 gb  Linux     eastus
+</code></pre>
+
+<p>In a minute or two, I had my bot up and running in ACI and was making amazing ASCII art in Slack. I didn&rsquo;t need to spin up any infrastructure or have an existing Docker runtime environment. I&rsquo;m getting per second billing, so I can use it for just as long as I need it (which is obviously all the time). The cost could add up if I ran it continously for 24x7, but the current <a href="https://azure.microsoft.com/en-us/pricing/details/container-instances/">pricing</a> is pretty nice. Even if I ran this 24x7, it ends up being around a $1.55 USD a day. This container was pretty simple and didn&rsquo;t need to expose any ports, but you can <a href="https://docs.microsoft.com/en-us/cli/azure/container?view=azure-cli-latest#az_container_create">do that</a> too. You could also mount an <a href="https://docs.microsoft.com/en-us/azure/storage/files/storage-how-to-create-file-share">Azure File Share</a>.</p>
+
+
+  
+<div class="prev-next-post pure-g">
+  <div class="pure-u-1-24" style="text-align: left;">
+    
+    <a href="https://jeremyrickard.github.io/post/osba-pcf-dev/"><i class="fa fa-chevron-left"></i></a>
+    
+  </div>
+  <div class="pure-u-10-24">
+    
+    <nav class="prev">
+      <a href="https://jeremyrickard.github.io/post/osba-pcf-dev/">Using Open Service Broker for Azure with PCF Dev</a>
+    </nav>
+    
+  </div>
+  <div class="pure-u-2-24">
+    &nbsp;
+  </div>
+  <div class="pure-u-10-24">
+    
+    <nav class="next">
+      <a href="https://jeremyrickard.github.io/post/spring-boot-with-kubernetes-service-catalog/">Using Spring Boot With Kubernetes Service Catalog</a>
+    </nav>
+    
+  </div>
+  <div class="pure-u-1-24" style="text-align: right;">
+    
+    <a href="https://jeremyrickard.github.io/post/spring-boot-with-kubernetes-service-catalog/"><i class="fa fa-chevron-right"></i></a>
+    
+  </div>
+</div>
+
+
+
+  
+
+</div>
+
+</div>
+</div>
+<script src="https://jeremyrickard.github.io/js/ui.js"></script>
+
+
+
+
+
+
+</body>
+</html>
+

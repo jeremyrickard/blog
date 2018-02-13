@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="generator" content="Hugo 0.31.1" />
+
+  <title>Using Spring Boot With Kubernetes Service Catalog &middot; jeremy doing things</title>
+
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-old-ie-min.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  <!--<![endif]-->
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="/css/side-menu.css">
+  <!--<![endif]-->
+
+  <link rel="stylesheet" href="/css/blackburn.css">
+
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+
+  
+  
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/androidstudio.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/bash.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+  <link rel="shortcut icon" href="https://jeremyrickard.github.io/img/favicon.ico" type="image/x-icon" />
+
+  
+  
+
+</head>
+
+
+<body>
+<div id="layout">
+
+  
+<a href="#menu" id="menuLink" class="menu-link">
+  
+  <span></span>
+</a>
+<div id="menu">
+
+  
+
+  <div class="pure-menu">
+    <ul class="pure-menu-list">
+      
+    </ul>
+  </div>
+
+  <div class="pure-menu social">
+  <ul class="pure-menu-list">
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://twitter.com/jrrickard" target="_blank"><i class="fa fa-twitter-square fa-fw"></i>Twitter</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://github.com/jeremyrickard" target="_blank"><i class="fa fa-github-square fa-fw"></i>GitHub</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+  </ul>
+</div>
+
+
+  <div>
+  <div class="small-print">
+    <small></small>
+  </div>
+  <div class="small-print">
+    <small>Built with&nbsp;<a href="https://gohugo.io/" target="_blank">Hugo</a></small>
+    <small>Theme&nbsp;<a href="https://github.com/yoshiharuyamashita/blackburn" target="_blank">Blackburn</a></small>
+  </div>
+</div>
+
+</div>
+
+
+  <div id="main">
+
+
+<div class="header">
+  <h1>Using Spring Boot With Kubernetes Service Catalog</h1>
+  <h2></h2>
+</div>
+<div class="content">
+
+  <div class="post-meta">
+
+  <div>
+    <i class="fa fa-calendar fa-fw"></i>
+    <time>11 Feb 2018, 20:29</time>
+  </div>
+
+  
+
+  
+
+  
+
+</div>
+
+  <p>In my last couple blog posts, I&rsquo;ve talked about <a href="https://github.com/kubernetes-incubator/service-catalog">Service Catalog</a>, the <a href="https://github.com/openservicebrokerapi/servicebroker">Open Service Broker API Specification</a> and <a href="https://github.com/Azure/open-service-broker-azure">Open Service Broker for Azure</a>, a.k.a. OSBA. You might ask yourself why those matter. I think <a href="https://twitter.com/arschles">Aaron</a> did a great job of explaining <a href="https://medium.com/@arschles/service-brokers-are-your-apps-best-friend-5de9e100404d">why</a> you should care about service brokers, so I won&rsquo;t really get into that. But my firm belief is that you should care about brokers and I think you will. I also think that there need to be some better abstractions to make you <em>really</em> want brokers. I think this twitter exchange between Gabe and Kelsey is sort of along those lines (open it up so you can read all the replies).</p>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Kubernetes was never intended to be the top of the architectural layer cake.</p>&mdash; Gabe Monroy (@gabrtv) <a href="https://twitter.com/gabrtv/status/849370912591933440?ref_src=twsrc%5Etfw">April 4, 2017</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>There will eventually be some higher level abstractions for what an application looks like, and part of that is going to be how you provision and connect to other services, especially things like data stores. Stateful data is going to make you want a service broker to handle that for you on all your clusters. In my last role, our application was largely based on <a href="https://github.com/vmware/xenon">Xenon</a> and as a side effect of that, our implementation resulted in stateful containers. In my opinion, this lead to a lot of complexity in terms of operation of our services that we didn&rsquo;t really need. I found this quote from Brendan Burns (by way of James Watters) to summarize what I think we experienced pretty well.</p>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">&quot;The less state you keep in an application, the easier it is for a developer to write a reliable application&quot; -- <a href="https://twitter.com/brendandburns?ref_src=twsrc%5Etfw">@brendandburns</a></p>&mdash; JW (@wattersjames) <a href="https://twitter.com/wattersjames/status/962746726779011072?ref_src=twsrc%5Etfw">February 11, 2018</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>In the end, we decided to shift architecturally and ended up gravitating toward PostgreSQL. We also ended up (at least for the interim) consuming a managed version via AWS. But we ended up falling into a variant of what Aaron calls the &ldquo;post-it note&rdquo; workflow. We built automation to use Terraform to provision the DB, then evolved the automation to populate Vault with the required info to connect. We essentially <em>built</em> a broker and parts of service catalog. Part of that was the relative immaturity of Service Catalog at the time, but AWS also didn’t have a really robust broker at the time. They do have <a href="https://github.com/awslabs/aws-servicebroker-documentation/wiki">one now</a> based on RedHat’s <a href="https://github.com/openshift/ansible-service-broker">Ansible Broker</a>. I think developers will expect all the major cloud providers to  provide a broker. As people move to managed offerings like AKS and GKE, they will want easier access to managed services. Eventually it will become table stakes for any of the managed Kubernetes providers.</p>
+
+<p>In Cloud Foundry, this easy avenue to service consumption via brokers is a fundamental part of the platform. <em>Using</em> services via CF is such a fundamental thing that <a href="https://spring.io/">Spring</a> has extensive support to make this <em>just work</em>. The developer experience is great. To be fair, Kubernetes is <em>not</em> a PaaS like CF so the comparison isn&rsquo;t entirely fair. But there are a lot of things we can learn from CF and build in the Kubernetes space. Let&rsquo;s take a look at how we might build a <a href="https://projects.spring.io/spring-boot/">Spring Boot</a> application and deploy it to Kubernetes and use Service Catalog in a similar way. If you want to follow along with this, you&rsquo;ll need a Kubernetes cluster with Service Catalog and a service broker (if you want to deploy my sample app, you&rsquo;ll need OSBA as well) installed. You can grab my sample application from <a href="https://github.com/jeremyrickard/svc-cat-documentdb">github</a>. You can use our <a href="https://github.com/Azure/open-service-broker-azure/blob/master/docs/quickstart-minikube.md">Minikube</a> or <a href="https://github.com/Azure/open-service-broker-azure/blob/master/docs/quickstart-aks.md">AKS</a> quickstarts to get a cluster with Service Catalog and OSBA up and running.</p>
+
+<p>First some context. When you build an application with Spring Boot, you get a lot for free. You can combine various <a href="https://github.com/spring-projects/spring-boot/tree/master/spring-boot-project/spring-boot-starters">spring-boot-starters</a> and get a lot of functionality out of the box. When you deploy to CF and declare a binding to a service, in keeping with the <a href="https://12factor.net/">12 Factor App</a> methodology you&rsquo;ll end up with an environment variable added to your application called VCAP_SERVICES. This will contain everything you need to connect to the service in question. Using Spring Boot and CF means you can take advantage of <a href="https://cloud.spring.io/spring-cloud-connectors/">Spring Cloud Connectors</a> to automatically <a href="http://engineering.pivotal.io/post/spring-boot-injecting-credentials/">parse</a> these things. As an application developer, it more or less <em>just works</em>.</p>
+
+<p>When using Service Catalog with Spring, the experience isn’t quite as straightforward. There are more steps and the out of the box experience via kubectl is a little lacking. When you create a binding with Service Catalog, you&rsquo;ll get a secret that contains the same information as what you&rsquo;d end up with in VCAP_SERVICES. It&rsquo;s then up to you as the application developer to wire this up. Provisioning a service and making a binding can  make your app deployment a bit more complicated. I think CF makes all this a little easier, so let’s compare what we have today with Kubernetes and Service Catalog. For the purposes of this comparison, I&rsquo;ve developed a <em>very</em> basic Spring Boot application using the <a href="https://github.com/Microsoft/azure-spring-boot">azure-spring-boot</a> starter and DocumentDB, provisioned with Service Catalog and OSBA.</p>
+
+<p>If you take a look at the <a href="https://docs.microsoft.com/en-us/java/azure/spring-framework/configure-spring-boot-starter-java-app-with-cosmos-db">how to</a> for using the Azure spring boot starter, you&rsquo;ll see that it requires a couple of properties:</p>
+
+<pre><code>azure.documentdb.uri=your-documentdb-uri
+azure.documentdb.key=your-documentdb-key
+azure.documentdb.database=your-documentdb-databasename
+</code></pre>
+
+<p>The how-to documentation is showing you exactly the post-it note workflow! Luckily with Spring, you can provide those things as environment variables as well. The equivalent environment variables would be:</p>
+
+<pre><code>AZURE_DOCUMENTDB_URI=your-documentdb-uri
+AZURE_DOCUMENTDB_KEY=your-documentdb-key
+AZURE_DOCUMENTDB_DATABASE=your-documentdb-databasename
+</code></pre>
+
+<p>With this in mind, we can get pretty close to the CF experience, but first we need to provision the service and create a binding for our application to use.</p>
+
+<p>Starting with making the service instance, we really have <em>two</em> options here. The first is to define the YAML for what that service instance might look like and create it with <code>kubectl</code> or the API. I&rsquo;ll get to the other way in a moment. The YAML would look something like this.</p>
+
+<pre><code class="language-yaml">apiVersion: servicecatalog.k8s.io/v1beta1
+kind: ServiceInstance
+metadata:
+  name: &lt;INSTANCE_NAME&gt;
+spec:
+  clusterServiceClassExternalName: &lt;CLASS&gt;
+  clusterServicePlanExternalName: &lt;PLAN&gt;
+  parameters:
+    &lt;KEY :  VALUE&gt;
+</code></pre>
+
+<p>After you created that, you&rsquo;d also need to create one for the binding. Your second option is a domain specific CLI called <a href="https://github.com/kubernetes-incubator/service-catalog/tree/master/cmd/svcat">svcat</a>. svcat brings a lot of that user experience from CF to service catalog. To get the plans and classes, you can simply run <code>svcat get plans</code>. Here is some sample output from svcat with Service Catalog configured with OSBA.</p>
+
+<pre><code class="language-console">$ svcat get plans
+premium                           azure-rediscache           Premium Tier, 6GB Cache          b1057a8f-9a01-423a-bc35-e168d5c04cf0
+  basic                             azure-rediscache           Basic Tier, 250MB Cache          362b3d1b-5b57-4289-80ad-4a15a760c29c
+  standard                          azure-rediscache           Standard Tier, 1GB Cache         4af8bbd1-962d-4e26-84f1-f72d1d959d87
+  premium-p4                        azure-sqldb-db-only        PremiumP4 Tier, 500 DTUs,        feb25d68-2b52-41b5-a249-28a747bc2c2e
+                                                               500GB, 35 days point-in-time
+                                                               restore
+  premium-p6                        azure-sqldb-db-only        PremiumP6 Tier, 1000 DTUs,       19487202-dc8a-4930-bbad-7bbf1486dbca
+                                                               500GB, 35 days point-in-time
+                                                               restore
+  standard-s0                       azure-sqldb-db-only        Standard Tier, 10 DTUs, 250GB,   9d36b6b3-b5f3-4907-a713-5cc13b785409
+                                                               35 days point-in-time restore
+</code></pre>
+
+<p>svcat also brings along other helpful commands, like <code>provision</code> and <code>bind</code>, which would replace creating the YAML above with more a more friendly command line experience. I&rsquo;ll be using svcat for the rest of this comparison instead of <code>kubectl</code>. These would be similar to corresponding <code>cf</code> commands for creating a service (what they would call a service instance) and binding a service to your app.</p>
+
+<p>To create my DocumentDB instance with <code>svcat</code>, I ran the following command.</p>
+
+<pre><code>$ svcat provision osba-documentdb --class  azure-cosmos-document-db --plan document-db -p location=eastus
+Name:        osba-documentdb
+  Namespace:  default
+  Status:
+  Class:       azure-cosmos-document-db
+  Plan:        document-db
+</code></pre>
+
+<p>I can then view the status with <code>svcat</code> like so.</p>
+
+<pre><code class="language-console"> svcat get instances
+            NAME              NAMESPACE              CLASS                PLAN          STATUS
++--------------------------+--------------+--------------------------+-------------+--------------+
+  osba-documentdb   osba-example   azure-cosmos-document-db   document-db   Provisioning
+</code></pre>
+
+<p>Almost all brokers will do an asynchronous provision operation, and OSBA is no different. You see the status here provided as <code>Provisioning</code>. After a few minutes, it should be finished if all went well.</p>
+
+<pre><code class="language-console">svcat get instances
+            NAME              NAMESPACE              CLASS                PLAN       STATUS
++--------------------------+--------------+--------------------------+-------------+--------+
+  osba-documentdb   default   azure-cosmos-document-db   document-db   Ready
+</code></pre>
+
+<p>At this point, we can create a binding to it. Service Catalog makes it a little easier than Cloud Foundry to bind your app to a service. In CF, you wouldn&rsquo;t be able to create the binding until you push your application. You could do this as part of the manifest when you are pushing the service or with the <code>cf</code> CLI after the application is pushed. If you read my post about using OSBA with pcf-dev, you can see an example of that. With Service Catalog, you can create the binding before you create the application.</p>
+
+<p>You could do this with <code>kubectl</code> and a YAML file, but I&rsquo;ll do it with <code>svcat</code>.</p>
+
+<pre><code class="language-console">svcat bind osba-documentdb --secret-name docuemntdb-binding
+</code></pre>
+
+<p>Once you run this command, you can query it with <code>svcat</code> to see the status. You&rsquo;ll also be able to see the secrets created in Kubernetes once the binding is finished. The secret that gets created is what we&rsquo;ll want to use for our application!</p>
+
+<pre><code class="language-console">$ svcat get bindings
+            NAME              NAMESPACE             INSTANCE           STATUS
++--------------------------+--------------+--------------------------+--------+
+  osba-documentdb-instance   default   osba-documentdb-instance   Ready
+
+
+$ kubectl get secrets
+NAME                  TYPE                                  DATA      AGE
+default-token-vkwss   kubernetes.io/service-account-token   3         7m
+docuemntdb-binding    Opaque                                3         49s
+</code></pre>
+
+<p>That <code>documentdb-binding</code> secret will contain everything we need for our application. If you examine it, you&rsquo;ll see it contains the following important pieces of information.</p>
+
+<ul>
+<li>primaryConnectionString</li>
+<li>primaryKey</li>
+<li>uri</li>
+</ul>
+
+<p>If we refer back to the required properties (which we can set via environment variables) for the Azure documentdb starter, we get a mapping like:</p>
+
+<ul>
+<li>AZURE_DOCUMENTDB_URI =&gt; uri</li>
+<li>AZURE_DOCUMENTDB_KEY =&gt; primaryKey</li>
+</ul>
+
+<p>When you provide these values, the Azure Spring Boot starter and the Azure Spring Data DocumentDB library will create a <code>DocumentClient</code> for you. This is what you&rsquo;d use to interact with the specified database. Currently, OSBA does <em>not</em> create a database when you provision a DocumentDB service, only the DatabaseAccount, so we do not have the third required piece of information, <code>AZURE_DOCUMENTDB_DATABASE</code> (we have an <a href="https://github.com/Azure/open-service-broker-azure/issues/259">open issue</a> to enhance that!!). The DocumentDB Spring Data library will automatically create collections in the database if they do not exist, but not the database itself. Using the Java SDK for DocumentDB, however, you can create a database with the uri and key above, so for this sample application I created an event listener and check for the database. If the database doesn&rsquo;t exist, it will do that.</p>
+
+<pre><code class="language-Java">@Component
+public class DatabaseChecker {
+
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    DocumentDbFactory factory;
+
+    @Value(&quot;${azure.documentdb.database}&quot;)
+    private String databaseName;
+    
+    @EventListener(ApplicationReadyEvent.class)
+    public void checkDatabase() {
+
+        DocumentClient client = factory.getDocumentClient();
+       
+        String queryString = String.format(&quot;SELECT * FROM root r WHERE r.id='%s'&quot;, databaseName);
+        List&lt;Database&gt; databaseList = client.queryDatabases(queryString, null).getQueryIterable().toList();
+        if (databaseList.size() &lt; 1) {
+            try { 
+                Database database = new Database();
+                database.setId(databaseName);   
+                client.createDatabase(database, null).getResource();
+            } catch (DocumentClientException dce) {
+                logger.error(&quot;Unable to create databae&quot;, dce);
+            }
+        }      
+    }
+}
+</code></pre>
+
+<p>The <code>checkDatabase</code> method is invoked when Spring fires the <code>ApplicationReadyEvent</code>. The class gets a <code>DocumentDBFactory</code> autowired into it. This is created with the two pieces of our secret above. Next, it queries to see if the database exists. It gets the database name from the @Value annotation, which is populated by our environment variable. Once this is done, the database <em>should</em> exist.</p>
+
+<p>At this point, all we need to do is wire that secret to our Spring Boot application via environment variables. This is done with normal Kubernetes mechanisms.</p>
+
+<pre><code class="language-YAML">apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: documentdb-example-deployment
+  labels:
+    app: documentdb-example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: documentdb-example
+  template:
+    metadata:
+      labels:
+        app: documentdb-example
+    spec:
+      containers:
+      - name: documentdb-example
+        image: jeremyrickard/documentdb-example:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: AZURE_DOCUMENTDB_URI
+          valueFrom:
+            secretKeyRef:
+              name: docuemntdb-binding
+              key: uri
+        - name: AZURE_DOCUMENTDB_KEY
+          valueFrom:
+            secretKeyRef:
+              name: docuemntdb-binding
+              key: primaryKey
+        - name: AZURE_DOCUMENTDB_DATABASE
+          value: osba-example
+</code></pre>
+
+<p>When I created the binding above, I specified a secret name of <code>documentdb-binding</code>. Using that secert name, I was able to wire up the secret to my application. I also specified the database name, since that is not created for us ahead of time. My event listener takes care of creating that database though. In contrast, if I deployed this with CF, I could define the binding in my manifest and then rely upon the VCAP_SERVICES environment variable being populated. Spring would also try to wire that up for me for many services (including DocumentDB here via the Azure library). For things that don&rsquo;t populate,  you still will get the VCAP_SERVICES environment variable and can pretty easily use it with the VCAP processor Spring provides. This is exactly what I did to create a MongoDB client using CosmosDB in my earlier blog post.</p>
+
+<p>Once you have the manifest created and you&rsquo;ve created the instance and binding, you can deploy the application! I&rsquo;ve included the manifest above in the my sample application repo and I&rsquo;ve published an image to Dockerhub with the sample app at <code>jeremyrickard/documentdb-example:latest</code>.</p>
+
+<p>If you&rsquo;ve been following along with the commands above and have a service instance and a binding created, you can run this in your Service Catalog and OSBA enabled cluster like so:</p>
+
+<pre><code class="language-console">kubectl create -f kubernets-manifest.yaml -n osba-example
+</code></pre>
+
+<p>If you&rsquo;d like to build it yourself, that&rsquo;s pretty easy too:</p>
+
+<pre><code class="language-console">./gradlew clean build
+</code></pre>
+
+<p>Once that is done, you&rsquo;ll need to build a Docker image with the included Dockerfile, push it to a repository your cluster can use and update the manifest to use that instead.</p>
+
+<p>When this is up and running, you can see the DocumentClient being initialized with the secret we provided. It will look something like:</p>
+
+<pre><code>018-02-12 03:18:46.474  INFO 1 --- [           main] c.m.azure.documentdb.DocumentClient      : Initializing DocumentClient with serviceEndpoint [https://{some-identifier}.documents.azure.com:443/]
+</code></pre>
+
+<p>If you inspect the secret and decode the uri field, you should see a match between what&rsquo;s in the log file and what is in your secret.</p>
+
+<p>In the end, it’s fairly easy to build a Spring Boot service that makes use of Service Catalog when you deploy to Kubernetes. Everything really fits in with a Kubernetes native workflow, including the actual provisioning of your service. You don’t need to step out into an external portal to bring things online or worry about a stateful app going bad in your cluster. The addition of <code>svcat</code> makes things just a little nicer! You can even install it as a kubectl plugin if you want to stick entirely with that.</p>
+
+<p>While I think the experience provided by <code>svcat</code> and <code>cf</code> are pretty nice for developing your application and making supporting services available, ultimately Kubernetes needs to provide a higher level of abstraction for dependencies. You can get a taste of what this might look like with Helm <a href="https://github.com/Azure/helm-charts">charts that are enhanced to create the service instance and bindings for you</a>. This experience still isn’t perfect, however. You still need to create the secret mapping yourself though, and these aren&rsquo;t really portable between brokers since service plans and classes differ between brokers. The items contained in the secret generated by binding also aren&rsquo;t mandated to follow any sort of naming convention, so we probably need an abstraction on those as well. Our team is working on some proposals that we think will make some of these things better! Stay tuned for those. I think we&rsquo;ll get there eventually and you&rsquo;ll wonder how you got by without service brokers.</p>
+
+
+  
+<div class="prev-next-post pure-g">
+  <div class="pure-u-1-24" style="text-align: left;">
+    
+    <a href="https://jeremyrickard.github.io/post/fun-with-aci/"><i class="fa fa-chevron-left"></i></a>
+    
+  </div>
+  <div class="pure-u-10-24">
+    
+    <nav class="prev">
+      <a href="https://jeremyrickard.github.io/post/fun-with-aci/">Fun With ACI</a>
+    </nav>
+    
+  </div>
+  <div class="pure-u-2-24">
+    &nbsp;
+  </div>
+  <div class="pure-u-10-24">
+    
+  </div>
+  <div class="pure-u-1-24" style="text-align: right;">
+    
+  </div>
+</div>
+
+
+
+  
+
+</div>
+
+</div>
+</div>
+<script src="https://jeremyrickard.github.io/js/ui.js"></script>
+
+
+
+
+
+
+</body>
+</html>
+
