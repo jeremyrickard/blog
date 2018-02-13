@@ -207,13 +207,13 @@
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 
-<p>There will eventually be some higher level abstractions for what an application looks like, and part of that is going to be how you provision and connect to other services, especially things like data stores. Stateful data is going to make you want a service broker to handle that for you on all your clusters. In my last role, our application was largely based on <a href="https://github.com/vmware/xenon">Xenon</a> and as a side effect of that, our implementation resulted in stateful containers. In my opinion, this lead to a lot of complexity in terms of operation of our services that we didn&rsquo;t really need. I found this quote from Brendan Burns (by way of James Watters) to summarize what I think we experienced pretty well.</p>
+<p>There will eventually be some higher level abstractions for what an application looks like, and part of that is going to be how you provision and connect to other services, especially things like data stores. Stateful data is going to make you want a service broker to handle that for you on all your clusters. In my last role, our application was largely based on <a href="https://github.com/vmware/xenon">Xenon</a> and as a side effect of that, our implementation resulted in stateful containers. In my opinion, this lead to a lot of complexity in terms of operation of our services that we didn&rsquo;t really need. Using a Stateful set worked out pretty well, but our bad architectural decision got in the way. I found this quote from Brendan Burns (by way of James Watters) to summarize what I think we experienced pretty well.</p>
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">&quot;The less state you keep in an application, the easier it is for a developer to write a reliable application&quot; -- <a href="https://twitter.com/brendandburns?ref_src=twsrc%5Etfw">@brendandburns</a></p>&mdash; JW (@wattersjames) <a href="https://twitter.com/wattersjames/status/962746726779011072?ref_src=twsrc%5Etfw">February 11, 2018</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 
-<p>In the end, we decided to shift architecturally and ended up gravitating toward PostgreSQL. We also ended up (at least for the interim) consuming a managed version via AWS. But we ended up falling into a variant of what Aaron calls the &ldquo;post-it note&rdquo; workflow. We built automation to use Terraform to provision the DB, then evolved the automation to populate Vault with the required info to connect. We essentially <em>built</em> a broker and parts of service catalog. Part of that was the relative immaturity of Service Catalog at the time, but AWS also didn’t have a really robust broker at the time. They do have <a href="https://github.com/awslabs/aws-servicebroker-documentation/wiki">one now</a> based on RedHat’s <a href="https://github.com/openshift/ansible-service-broker">Ansible Broker</a>. I think developers will expect all the major cloud providers to  provide a broker. As people move to managed offerings like AKS and GKE, they will want easier access to managed services. Eventually it will become table stakes for any of the managed Kubernetes providers.</p>
+<p>In the end, we decided to shift architecturally and ended up gravitating toward PostgreSQL. We also ended up (at least for the interim) consuming a managed version via AWS. But we ended up falling into a variant of what Aaron calls the &ldquo;post-it note&rdquo; workflow. We built automation to use Terraform to provision the DB, then evolved the automation to populate Vault with the required info to connect. We essentially <em>built</em> a broker and parts of service catalog. Part of that was the relative immaturity of Service Catalog at the time, but AWS also didn’t have a really robust broker at the time. They do have <a href="https://github.com/awslabs/aws-servicebroker-documentation/wiki">one now</a> based on RedHat’s <a href="https://github.com/openshift/ansible-service-broker">Ansible Broker</a>. I think developers will expect all the major cloud providers to provide a broker. As people move to managed offerings like AKS and GKE, they will want easier access to managed services. This won&rsquo;t be everyone and there is nothing wrong with running those stateful services on cluster, but managed services exist for a reason. Eventually it will become table stakes for any of the managed Kubernetes providers.</p>
 
 <p>In Cloud Foundry, this easy avenue to service consumption via brokers is a fundamental part of the platform. <em>Using</em> services via CF is such a fundamental thing that <a href="https://spring.io/">Spring</a> has extensive support to make this <em>just work</em>. The developer experience is great. To be fair, Kubernetes is <em>not</em> a PaaS like CF so the comparison isn&rsquo;t entirely fair. But there are a lot of things we can learn from CF and build in the Kubernetes space. Let&rsquo;s take a look at how we might build a <a href="https://projects.spring.io/spring-boot/">Spring Boot</a> application and deploy it to Kubernetes and use Service Catalog in a similar way. If you want to follow along with this, you&rsquo;ll need a Kubernetes cluster with Service Catalog and a service broker (if you want to deploy my sample app, you&rsquo;ll need OSBA as well) installed. You can grab my sample application from <a href="https://github.com/jeremyrickard/svc-cat-documentdb">github</a>. You can use our <a href="https://github.com/Azure/open-service-broker-azure/blob/master/docs/quickstart-minikube.md">Minikube</a> or <a href="https://github.com/Azure/open-service-broker-azure/blob/master/docs/quickstart-aks.md">AKS</a> quickstarts to get a cluster with Service Catalog and OSBA up and running.</p>
 
@@ -272,7 +272,7 @@ premium                           azure-rediscache           Premium Tier, 6GB C
 
 <p>To create my DocumentDB instance with <code>svcat</code>, I ran the following command.</p>
 
-<pre><code>$ svcat provision osba-documentdb --class  azure-cosmos-document-db --plan document-db -p location=eastus
+<pre><code class="language-console">$ svcat provision osba-documentdb --class  azure-cosmos-document-db --plan document-db -p location=eastus
 Name:        osba-documentdb
   Namespace:  default
   Status:
@@ -282,7 +282,7 @@ Name:        osba-documentdb
 
 <p>I can then view the status with <code>svcat</code> like so.</p>
 
-<pre><code class="language-console"> svcat get instances
+<pre><code class="language-console">$ svcat get instances
             NAME              NAMESPACE              CLASS                PLAN          STATUS
 +--------------------------+--------------+--------------------------+-------------+--------------+
   osba-documentdb   osba-example   azure-cosmos-document-db   document-db   Provisioning
@@ -290,7 +290,7 @@ Name:        osba-documentdb
 
 <p>Almost all brokers will do an asynchronous provision operation, and OSBA is no different. You see the status here provided as <code>Provisioning</code>. After a few minutes, it should be finished if all went well.</p>
 
-<pre><code class="language-console">svcat get instances
+<pre><code class="language-console">$ svcat get instances
             NAME              NAMESPACE              CLASS                PLAN       STATUS
 +--------------------------+--------------+--------------------------+-------------+--------+
   osba-documentdb   default   azure-cosmos-document-db   document-db   Ready
