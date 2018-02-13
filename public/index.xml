@@ -1,22 +1,52 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>jeremy rickard</title>
+    <title>jeremy doing things</title>
     <link>https://jeremyrickard.github.io/</link>
-    <description>Recent content on jeremy rickard</description>
+    <description>Recent content on jeremy doing things</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 07 Dec 2017 15:50:12 -0700</lastBuildDate>
+    <lastBuildDate>Sun, 11 Feb 2018 20:29:20 -0700</lastBuildDate>
     
 	<atom:link href="https://jeremyrickard.github.io/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Using Spring Boot With Kubernetes Service Catalog</title>
+      <link>https://jeremyrickard.github.io/post/spring-boot-with-kubernetes-service-catalog/</link>
+      <pubDate>Sun, 11 Feb 2018 20:29:20 -0700</pubDate>
+      
+      <guid>https://jeremyrickard.github.io/post/spring-boot-with-kubernetes-service-catalog/</guid>
+      <description>In my last couple blog posts, I&amp;rsquo;ve talked about Service Catalog, the Open Service Broker API Specification and Open Service Broker for Azure, a.k.a. OSBA. You might ask yourself why those matter. I think Aaron did a great job of explaining why you should care about service brokers, so I won&amp;rsquo;t really get into that. But my firm belief is that you should care about brokers and I think you will.</description>
+    </item>
+    
+    <item>
+      <title>Fun With ACI</title>
+      <link>https://jeremyrickard.github.io/post/fun-with-aci/</link>
+      <pubDate>Fri, 09 Feb 2018 21:53:28 -0700</pubDate>
+      
+      <guid>https://jeremyrickard.github.io/post/fun-with-aci/</guid>
+      <description>Friday is usually a pretty good day. It&amp;rsquo;s the end of the week and the Azure Containers team has a show and tell with fun demos and people share rants. Today there were also bunch of jokes about clippy which resulted in a bunch of hilarious art from http://textart.io/cowsay/clippy. Such as&amp;hellip;
+.@arschles is my hero 🤣 pic.twitter.com/LfYXmde3DE
+&amp;mdash; jessie frazelle (@jessfraz) February 9, 2018  Then there were jokes that we needed a bot&amp;hellip;.</description>
+    </item>
+    
+    <item>
+      <title>Using Open Service Broker for Azure with PCF Dev</title>
+      <link>https://jeremyrickard.github.io/post/osba-pcf-dev/</link>
+      <pubDate>Wed, 07 Feb 2018 08:23:38 -0700</pubDate>
+      
+      <guid>https://jeremyrickard.github.io/post/osba-pcf-dev/</guid>
+      <description>Update: I originally incorrectly stated that the Azure Spring Boot library didn&amp;rsquo;t work with the VCAP_SERVICES populated by CF when using Open Service Broker for Azure. It does indeed work for a select number of services, such as DocumentDB. I&amp;rsquo;ve updated the blog post to reflect this.
+I&amp;rsquo;ve had the good fortune of working with a great team on Open Service Broker for Azure for the last few months. What&amp;rsquo;s Open Service Broker for Azure (OSBA!</description>
+    </item>
+    
+    <item>
       <title>New Beginnings and a Tale of Two Factors</title>
-      <link>https://jeremyrickard.github.io/posts/new-beginnings/</link>
+      <link>https://jeremyrickard.github.io/post/new-beginnings/</link>
       <pubDate>Thu, 07 Dec 2017 15:50:12 -0700</pubDate>
       
-      <guid>https://jeremyrickard.github.io/posts/new-beginnings/</guid>
+      <guid>https://jeremyrickard.github.io/post/new-beginnings/</guid>
       <description>I&amp;rsquo;m wrapping up 2017 with an exciting new job at Microsoft working on the super cool Azure Container Service. I really enjoyed my four years at VMware. I worked on really cool stuff and I worked with some really great people. So why make the change? I had reached a point where I felt like I was ready to do something different and I saw a really intersting job posting on Twitter.</description>
     </item>
     

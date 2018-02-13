@@ -1,4 +1,13 @@
 baseURL = "https://jeremyrickard.github.io/"
 languageCode = "en-us"
-title = "jeremy rickard"
-theme = "pickles"
+title = "jeremy doing things"
+theme = "blackburn"
+
+[params]
+  highlightjs = "androidstudio"
+  highlightjs_extra_languages = ["yaml","bash"]
+
+[social]
+  twitter = "jrrickard"
+  github = "jeremyrickard"
+

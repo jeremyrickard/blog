@@ -6,10 +6,19 @@
     <description>Recent content in Posts on jeremy rickard</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 07 Dec 2017 15:50:12 -0700</lastBuildDate>
+    <lastBuildDate>Wed, 07 Feb 2018 08:23:38 -0700</lastBuildDate>
     
 	<atom:link href="https://jeremyrickard.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Using Open Service Broker for Azure with PCF Dev</title>
+      <link>https://jeremyrickard.github.io/posts/osba-pcf-dev/</link>
+      <pubDate>Wed, 07 Feb 2018 08:23:38 -0700</pubDate>
+      
+      <guid>https://jeremyrickard.github.io/posts/osba-pcf-dev/</guid>
+      <description>I&amp;rsquo;ve had the good fortune of working with a great team on Open Service Broker for Azure for the last few months. What&amp;rsquo;s OSBA you ask? It&amp;rsquo;s an Open Service Broker API compliant service broker that enables you to easily provision and bind to services like MySQL, SQLDB and CosmosDB in Azure. I was familiar with service brokers from working with Cloud Foundry in the past, so I was really excited to join the Azure team and get a chance to work on bringing the great exeperience developers get using service brokers with CF to Kubernetes with Service Catalog!</description>
+    </item>
     
     <item>
       <title>New Beginnings and a Tale of Two Factors</title>
