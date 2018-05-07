@@ -269,36 +269,88 @@ helm install helm/customerapp/ -n capp --set image.repository=jeremyrickard/cust
 
 <p>The first difference is in the helm install output. We&rsquo;ve created two additional resources here, the <em>ServiceInstance</em> and the <em>ServiceBinding</em>. The <em>ServiceInstance</em> is that will instruct Service Catalog to actually create a new CosmosDB instance in Azure! The <em>ServiceBinding</em> will create a secret with all the connection info needed.</p>
 
-<pre><code>==&gt; v1beta1/ServiceBinding
-NAME                               AGE
-capp-customerapp-cosmosdb-binding  1s
+<p>Those are pretty simple and encapsulate parameters you&rsquo;d like to use to create your CosmosDB instance.</p>
 
-==&gt; v1beta1/ServiceInstance
-mongodb  1s
+<pre><code>apiVersion: servicecatalog.k8s.io/v1beta1
+kind: ServiceInstance
+metadata:
+  name: {{ .Values.cosmosdb.name }}
+  labels:
+    app: {{ template &quot;fullname&quot; . }}
+    chart: &quot;{{ .Chart.Name }}-{{ .Chart.Version }}&quot;
+    release: &quot;{{ .Release.Name }}&quot;
+    heritage: &quot;{{ .Release.Service }}&quot;
+spec:
+  clusterServiceClassExternalName: azure-cosmosdb-mongo-account
+  clusterServicePlanExternalName: account
+  parameters:
+    location: {{ .Values.cosmosdb.location }}
+    resourceGroup: {{ .Values.cosmosdb.resourceGroup | default .Release.Namespace }}
+    ipFilters:
+      allowedIPRanges:
+        - 0.0.0.0/0
+      allowAccessFromAzure: enabled
+
 </code></pre>
 
-<p>The other thing you&rsquo;ll notice is that the pods for this deployment go into a failure state:</p>
+<p>The binding is even simpler:</p>
 
-<pre><code>$ k get pods
+<pre><code>apiVersion: servicecatalog.k8s.io/v1beta1
+kind: ServiceBinding
+metadata:
+  name: {{ template &quot;fullname&quot; . }}-cosmosdb-binding
+  labels:
+    app: {{ template &quot;fullname&quot; . }}
+    chart: &quot;{{ .Chart.Name }}-{{ .Chart.Version }}&quot;
+    release: &quot;{{ .Release.Name }}&quot;
+    heritage: &quot;{{ .Release.Service }}&quot;
+spec:
+  instanceRef:
+    name: {{ .Values.cosmosdb.name  }}
+  secretName: customerdatabasesecret
+  secretTransforms:
+    -
+      renameKey:
+        from: connectionString
+        to: MONGODB_URI
+</code></pre>
+
+<p>By adding these two templates to the helm chart, we&rsquo;ll create the following resources in Kubernetes:</p>
+
+<p>==&gt; v1beta1/ServiceBinding
+NAME                               AGE
+capp-customerapp-cosmosdb-binding  1s</p>
+
+<p>==&gt; v1beta1/ServiceInstance
+mongodb  1s</p>
+
+<pre><code>
+The other thing you'll notice is that the pods for this deployment go into a failure state:
+
+</code></pre>
+
+<p>$ k get pods
 NAME                                                        READY     STATUS                       RESTARTS   AGE
 capp-customerapp-56dd4f7d44-hbzm6                           0/1       CreateContainerConfigError   0          3m
 capp-customerapp-56dd4f7d44-vlj8p                           0/1       CreateContainerConfigError   0          3m
-capp-customerapp-56dd4f7d44-z88w6                           0/1       CreateContainerConfigError   0          3m
+capp-customerapp-56dd4f7d44-z88w6                           0/1       CreateContainerConfigError   0          3m</p>
+
+<pre><code>
+This is because we first need to create the CosmosDB instance AND the binding  before the pods will start up. The pods use a secret that will be generated as part of that process, so they won't start until those are both complete. After a bit of time, they should start up and be happy. You'll notice that a secret was created for you with all the connection information as a result of the binding. You no longer need to manually create that as in Simon's example.
+
+The secret has some extra info in it, because OSBA returns additional information to let you use the connection info in a flexible way. We applied a transform to that data though, so we should have the `MONGODB_URI` key that Simon's example was expecting:
+
 </code></pre>
 
-<p>This is because we first need to create the CosmosDB instance AND the binding  before the pods will start up. The pods use a secret that will be generated as part of that process, so they won&rsquo;t start until those are both complete. After a bit of time, they should start up and be happy. You&rsquo;ll notice that a secret was created for you with all the connection information as a result of the binding. You no longer need to manually create that as in Simon&rsquo;s example.</p>
-
-<p>The secret has some extra info in it, because OSBA returns additional information to let you use the connection info in a flexible way. We applied a transform to that data though, so we should have the <code>MONGODB_URI</code> key that Simon&rsquo;s example was expecting:</p>
-
-<pre><code>$ k get secret customerdatabasesecret -o yaml
+<p>$ k get secret customerdatabasesecret -o yaml
 apiVersion: v1
 data:
-  MONGODB_URI: &lt;redacted&gt;
-  host: &lt;redacted&gt;
-  password: &lt;redacted&gt;
+  MONGODB_URI: <redacted>
+  host: <redacted>
+  password: <redacted>
   port: MTAyNTU=
-  uri: &lt;redacted&gt;
-  username: &lt;redacted&gt;
+  uri: <redacted>
+  username: <redacted>
 kind: Secret
 metadata:
   creationTimestamp: 2018-05-07T18:31:47Z
@@ -311,9 +363,9 @@ metadata:
     kind: ServiceBinding
     name: capp-customerapp-cosmosdb-binding
     uid: 1262c90b-5224-11e8-8368-0a580af4019a
-  resourceVersion: &quot;1970008&quot;
+  resourceVersion: &ldquo;1970008&rdquo;
   selfLink: /api/v1/namespaces/tweets/secrets/customerdatabasesecret
-</code></pre>
+```</p>
 
 <p>As you can see from the secret, it was created by Service Catalog! You can now launch the app and it just works!</p>
 

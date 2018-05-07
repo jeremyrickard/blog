@@ -76,7 +76,56 @@ When you run this, you'll see a couple of things that are a little different tha
 
 The first difference is in the helm install output. We've created two additional resources here, the _ServiceInstance_ and the _ServiceBinding_. The _ServiceInstance_ is that will instruct Service Catalog to actually create a new CosmosDB instance in Azure! The _ServiceBinding_ will create a secret with all the connection info needed.
 
+Those are pretty simple and encapsulate parameters you'd like to use to create your CosmosDB instance. 
+
 ```
+apiVersion: servicecatalog.k8s.io/v1beta1
+kind: ServiceInstance
+metadata:
+  name: {{ .Values.cosmosdb.name }}
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  clusterServiceClassExternalName: azure-cosmosdb-mongo-account
+  clusterServicePlanExternalName: account
+  parameters:
+    location: {{ .Values.cosmosdb.location }}
+    resourceGroup: {{ .Values.cosmosdb.resourceGroup | default .Release.Namespace }}
+    ipFilters:
+      allowedIPRanges:
+        - 0.0.0.0/0
+      allowAccessFromAzure: enabled
+
+```
+
+The binding is even simpler:
+
+```
+apiVersion: servicecatalog.k8s.io/v1beta1
+kind: ServiceBinding
+metadata:
+  name: {{ template "fullname" . }}-cosmosdb-binding
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  instanceRef:
+    name: {{ .Values.cosmosdb.name  }}
+  secretName: customerdatabasesecret
+  secretTransforms:
+    -
+      renameKey:
+        from: connectionString
+        to: MONGODB_URI
+```
+
+By adding these two templates to the helm chart, we'll create the following resources in Kubernetes:
+
 ==> v1beta1/ServiceBinding
 NAME                               AGE
 capp-customerapp-cosmosdb-binding  1s
