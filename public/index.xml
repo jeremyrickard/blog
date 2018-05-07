@@ -6,10 +6,20 @@
     <description>Recent content on jeremy doing things</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 11 Feb 2018 20:29:20 -0700</lastBuildDate>
+    <lastBuildDate>Mon, 07 May 2018 10:53:15 -0600</lastBuildDate>
     
 	<atom:link href="https://jeremyrickard.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Using OSBA With Some CosmosDB Samples - Part One</title>
+      <link>https://jeremyrickard.github.io/post/some-osba-examples/</link>
+      <pubDate>Mon, 07 May 2018 10:53:15 -0600</pubDate>
+      
+      <guid>https://jeremyrickard.github.io/post/some-osba-examples/</guid>
+      <description>It&amp;rsquo;s been a pretty exciting few weeks! I just returned from Kubecon EU (watch my talk!!) and we&amp;rsquo;ve been hard at work on Open Service Broker for Azure and Service Catalog! We recently released v0.11.0 of OSBA that brings along some cool new things, like alignment with the new pricing tiers for MySQL and PostgreSQL and a couple of great enhancements to CosmosDB!
+I think the one that I&amp;rsquo;m most excited about in the CosmosDB service is that you can now automatically create both a database AND a database account directly from Kubernetes of Cloud Foundry.</description>
+    </item>
     
     <item>
       <title>Using Spring Boot With Kubernetes Service Catalog</title>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="generator" content="Hugo 0.31.1" />
+
+  <title>Using OSBA With Some CosmosDB Samples - Part One &middot; jeremy doing things</title>
+
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-old-ie-min.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  <!--<![endif]-->
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="/css/side-menu.css">
+  <!--<![endif]-->
+
+  <link rel="stylesheet" href="/css/blackburn.css">
+
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+
+  
+  
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/androidstudio.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/bash.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+  <link rel="shortcut icon" href="https://jeremyrickard.github.io/img/favicon.ico" type="image/x-icon" />
+
+  
+  
+
+</head>
+
+
+<body>
+<div id="layout">
+
+  
+<a href="#menu" id="menuLink" class="menu-link">
+  
+  <span></span>
+</a>
+<div id="menu">
+
+  
+
+  <div class="pure-menu">
+    <ul class="pure-menu-list">
+      
+    </ul>
+  </div>
+
+  <div class="pure-menu social">
+  <ul class="pure-menu-list">
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://twitter.com/jrrickard" target="_blank"><i class="fa fa-twitter-square fa-fw"></i>Twitter</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://github.com/jeremyrickard" target="_blank"><i class="fa fa-github-square fa-fw"></i>GitHub</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+  </ul>
+</div>
+
+
+  <div>
+  <div class="small-print">
+    <small></small>
+  </div>
+  <div class="small-print">
+    <small>Built with&nbsp;<a href="https://gohugo.io/" target="_blank">Hugo</a></small>
+    <small>Theme&nbsp;<a href="https://github.com/yoshiharuyamashita/blackburn" target="_blank">Blackburn</a></small>
+  </div>
+</div>
+
+</div>
+
+
+  <div id="main">
+
+
+<div class="header">
+  <h1>Using OSBA With Some CosmosDB Samples - Part One</h1>
+  <h2></h2>
+</div>
+<div class="content">
+
+  <div class="post-meta">
+
+  <div>
+    <i class="fa fa-calendar fa-fw"></i>
+    <time>07 May 2018, 10:53</time>
+  </div>
+
+  
+
+  
+
+  
+
+</div>
+
+  <p>It&rsquo;s been a pretty exciting few weeks! I just returned from Kubecon EU (watch my <a href="https://www.youtube.com/watch?v=SuicCBXJRPg">talk</a>!!) and we&rsquo;ve been hard at work on Open Service Broker for Azure and Service Catalog! We recently released <a href="https://github.com/Azure/open-service-broker-azure/releases/tag/v0.11.0">v0.11.0</a> of OSBA that brings along some cool new things, like alignment with the new pricing tiers for MySQL and PostgreSQL and a couple of great enhancements to CosmosDB!</p>
+
+<p>I think the one that I&rsquo;m most excited about in the CosmosDB service is that you can now automatically create both a database AND a database account directly from Kubernetes of Cloud Foundry. This has worked with CosmosDB: MongoDB API for some time, but if you were using the SQL API we always stopped a little short of making the service usable with minimal effort! That has changed in our latest release. While we were hard at work on this, the <a href="https://github.com/Microsoft/spring-data-cosmosdb">Spring Data for Azure Cosmos DB</a> library has seen some updates and a new sample app has been included. There was also a great blog post on the <a href="https://open.microsoft.com/2018/03/28/deploy-java-application-azure-kubernetes-service-cosmos-db/">Microsoft + Open Source blog</a> from our friends at Bitnami about deploying a Java application on AKS with CosmosDB: MongoDB API. As we don&rsquo;t have a good CosmosDB example in our <a href="https://github.com/Azure/helm-charts">Azure/helm-charts</a> repo, I thought this would be a great time so show how easy it is to use OSBA with both of these examples! I&rsquo;ll do this in a series of blog posts in order to make these a little more easy to digest.</p>
+
+<p>Let&rsquo;s start with the updated Spring Data for CosmosDB example! We have a great <a href="https://azure.microsoft.com/en-us/blog/spring-data-azure-cosmos-db-nosql-data-access-on-azure/">blog post</a> about this one that isn&rsquo;t specific to Kubernetes or AKS. But I think this example works really with AKS, especially when you use Service Catalog and Open Server Broker for Azure! Let&rsquo;s take a look at that. I&rsquo;ve gone ahead and forked this repository to add some artifacts to make this a little easier to get going on AKS.</p>
+
+<p>The first step in this example is to create a new database instance using the Azure portal. Instead of that, we&rsquo;ll instead use Service Catalog and Open Service Broker for Azure.</p>
+
+<p>Let&rsquo;s start with the <a href="https://github.com/nomisbeme/customerapp">example</a> from <a href="https://twitter.com/simonpbennett">Simon Bennett</a> at Bitnami!</p>
+
+<p>This example is great and walks you through an AKS cluster, installing helm and doing ingress and using SSL with <a href="https://github.com/jetstack/kube-lego">kube-lego</a>. If you follow along, you get a pretty great experience using Kubernetes tooling once you have the cluster up and running, until you need to create the database. Using the <code>az</code> cli or the portal is sort of unavoidable for creation of the AKS cluster, but we can replace the manual steps of the creation of the Azure CosmosDB database and the creation of the secret with a pretty small addition to Simon&rsquo;s example! For this, we&rsquo;ll use my fork of his example app, which you can find <a href="https://github.com/jeremyrickard/customerapp">here</a>.</p>
+
+<p>First, you&rsquo;ll want to install Service Catalog and OSBA. You can do that by following our <a href="https://github.com/Azure/open-service-broker-azure/blob/master/docs/quickstart-aks.md">quickstart</a>, but the TL;DR is:</p>
+
+<p>First, setup some environment variables with your Azure account info:</p>
+
+<pre><code>az account list -o table
+export AZURE_SUBSCRIPTION_ID=&quot;&lt;SubscriptionId&gt;&quot;
+az ad sp create-for-rbac --name osba-quickstart -o table
+export AZURE_TENANT_ID=&lt;Tenant&gt;
+export AZURE_CLIENT_ID=&lt;AppId&gt;
+export AZURE_CLIENT_SECRET=&lt;Password&gt;
+</code></pre>
+
+<p>Next, install Service Catalog. Simon already has you install Helm, so&hellip;.</p>
+
+<pre><code>helm repo add svc-cat https://svc-catalog-charts.storage.googleapis.com
+helm install svc-cat/catalog --name catalog --namespace catalog \
+   --set rbacEnable=false \
+   --set apiserver.storage.etcd.persistence.enabled=true
+</code></pre>
+
+<p>This might take a minute or two, but once it&rsquo;s done you just need to install OSBA:</p>
+
+<pre><code>helm repo add azure https://kubernetescharts.blob.core.windows.net/azure
+helm install azure/open-service-broker-azure --name osba --namespace osba \
+  --set azure.subscriptionId=$AZURE_SUBSCRIPTION_ID \
+  --set azure.tenantId=$AZURE_TENANT_ID \
+  --set azure.clientId=$AZURE_CLIENT_ID \
+  --set azure.clientSecret=$AZURE_CLIENT_SECRET \
+  --set modules.minStability=EXPERIMENTAL
+</code></pre>
+
+<p>Check the status of everything and pause here until everything is up and running.</p>
+
+<pre><code>$ kubectl get pods --namespace catalog
+NAME                                                     READY     STATUS    RESTARTS   AGE
+po/catalog-catalog-apiserver-5999465555-9hgwm            2/2       Running   4          9d
+po/catalog-catalog-controller-manager-554c758786-f8qvc   1/1       Running   11         9d
+
+$ kubectl get pods --namespace osba
+NAME                                           READY     STATUS    RESTARTS   AGE
+po/osba-azure-service-broker-8495bff484-7ggj6   1/1       Running   0          9d
+po/osba-redis-5b44fc9779-hgnck                  1/1       Running   0          9d
+</code></pre>
+
+<p>Once everything is happy, you&rsquo;re good to go!</p>
+
+<p>We don&rsquo;t actually need to make <em>ANY</em> code changes to make this example work, we only need to enhance the Helm chart to also create a service instance and create a service binding for that instance. I also added an attribute to the values.yaml to support those new templates.</p>
+
+<p>We&rsquo;ll take advantage of the new secret transforms capability from Service Catalog in order to shape the binding secret into the form the helm chart was already expecting! Simon&rsquo;s docker container is already published, so you can use it as is or build it yourself. I&rsquo;ll build it myself, just to be safe.</p>
+
+<pre><code> mvn clean package
+docker build -t jeremyrickard/customerapp:0.1.2 .
+docker push jeremyrickard/customerapp:0.1.2
+helm install helm/customerapp/ -n capp --set image.repository=jeremyrickard/customerapp --set image.tag=0.1.2
+</code></pre>
+
+<p>When you run this, you&rsquo;ll see a couple of things that are a little different than if you just followed Simon&rsquo;s example as is.</p>
+
+<p>The first difference is in the helm install output. We&rsquo;ve created two additional resources here, the <em>ServiceInstance</em> and the <em>ServiceBinding</em>. The <em>ServiceInstance</em> is that will instruct Service Catalog to actually create a new CosmosDB instance in Azure! The <em>ServiceBinding</em> will create a secret with all the connection info needed.</p>
+
+<pre><code>==&gt; v1beta1/ServiceBinding
+NAME                               AGE
+capp-customerapp-cosmosdb-binding  1s
+
+==&gt; v1beta1/ServiceInstance
+mongodb  1s
+</code></pre>
+
+<p>The other thing you&rsquo;ll notice is that the pods for this deployment go into a failure state:</p>
+
+<pre><code>$ k get pods
+NAME                                                        READY     STATUS                       RESTARTS   AGE
+capp-customerapp-56dd4f7d44-hbzm6                           0/1       CreateContainerConfigError   0          3m
+capp-customerapp-56dd4f7d44-vlj8p                           0/1       CreateContainerConfigError   0          3m
+capp-customerapp-56dd4f7d44-z88w6                           0/1       CreateContainerConfigError   0          3m
+</code></pre>
+
+<p>This is because we first need to create the CosmosDB instance AND the binding  before the pods will start up. The pods use a secret that will be generated as part of that process, so they won&rsquo;t start until those are both complete. After a bit of time, they should start up and be happy. You&rsquo;ll notice that a secret was created for you with all the connection information as a result of the binding. You no longer need to manually create that as in Simon&rsquo;s example.</p>
+
+<p>The secret has some extra info in it, because OSBA returns additional information to let you use the connection info in a flexible way. We applied a transform to that data though, so we should have the <code>MONGODB_URI</code> key that Simon&rsquo;s example was expecting:</p>
+
+<pre><code>$ k get secret customerdatabasesecret -o yaml
+apiVersion: v1
+data:
+  MONGODB_URI: &lt;redacted&gt;
+  host: &lt;redacted&gt;
+  password: &lt;redacted&gt;
+  port: MTAyNTU=
+  uri: &lt;redacted&gt;
+  username: &lt;redacted&gt;
+kind: Secret
+metadata:
+  creationTimestamp: 2018-05-07T18:31:47Z
+  name: customerdatabasesecret
+  namespace: tweets
+  ownerReferences:
+  - apiVersion: servicecatalog.k8s.io/v1beta1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ServiceBinding
+    name: capp-customerapp-cosmosdb-binding
+    uid: 1262c90b-5224-11e8-8368-0a580af4019a
+  resourceVersion: &quot;1970008&quot;
+  selfLink: /api/v1/namespaces/tweets/secrets/customerdatabasesecret
+</code></pre>
+
+<p>As you can see from the secret, it was created by Service Catalog! You can now launch the app and it just works!</p>
+
+<p><img src="/images/cosmos-sample-apps/sample-app.png" alt="Sample App" />
+<img src="/images/cosmos-sample-apps/portal-view.png" alt="Portal View" /></p>
+
+<p>The main difference between this example and the Spring Data for Azure CosmosDB example is the choice of API. This one uses MongoDB and in this case, all that is REALLY needed is the database account. Using a MongoDB client with the database account would automagically create both the collection and database inside the account. That&rsquo;s a little different than the behavior when using the SQL API with CosmosDB. Until v0.11.0, OSBA wouldn&rsquo;t do this for you automatically. In part two of this series, I&rsquo;ll show you how that works.</p>
+
+
+  
+<div class="prev-next-post pure-g">
+  <div class="pure-u-1-24" style="text-align: left;">
+    
+    <a href="https://jeremyrickard.github.io/post/spring-boot-with-kubernetes-service-catalog/"><i class="fa fa-chevron-left"></i></a>
+    
+  </div>
+  <div class="pure-u-10-24">
+    
+    <nav class="prev">
+      <a href="https://jeremyrickard.github.io/post/spring-boot-with-kubernetes-service-catalog/">Using Spring Boot With Kubernetes Service Catalog</a>
+    </nav>
+    
+  </div>
+  <div class="pure-u-2-24">
+    &nbsp;
+  </div>
+  <div class="pure-u-10-24">
+    
+  </div>
+  <div class="pure-u-1-24" style="text-align: right;">
+    
+  </div>
+</div>
+
+
+
+  
+
+</div>
+
+</div>
+</div>
+<script src="https://jeremyrickard.github.io/js/ui.js"></script>
+
+
+
+
+
+
+</body>
+</html>
+
