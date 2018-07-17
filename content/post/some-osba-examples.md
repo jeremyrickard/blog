@@ -126,6 +126,7 @@ spec:
 
 By adding these two templates to the helm chart, we'll create the following resources in Kubernetes:
 
+```
 ==> v1beta1/ServiceBinding
 NAME                               AGE
 capp-customerapp-cosmosdb-binding  1s

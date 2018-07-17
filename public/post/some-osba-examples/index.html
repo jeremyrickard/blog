@@ -317,40 +317,36 @@ spec:
 
 <p>By adding these two templates to the helm chart, we&rsquo;ll create the following resources in Kubernetes:</p>
 
-<p>==&gt; v1beta1/ServiceBinding
+<pre><code>==&gt; v1beta1/ServiceBinding
 NAME                               AGE
-capp-customerapp-cosmosdb-binding  1s</p>
+capp-customerapp-cosmosdb-binding  1s
 
-<p>==&gt; v1beta1/ServiceInstance
-mongodb  1s</p>
-
-<pre><code>
-The other thing you'll notice is that the pods for this deployment go into a failure state:
-
+==&gt; v1beta1/ServiceInstance
+mongodb  1s
 </code></pre>
 
-<p>$ k get pods
+<p>The other thing you&rsquo;ll notice is that the pods for this deployment go into a failure state:</p>
+
+<pre><code>$ k get pods
 NAME                                                        READY     STATUS                       RESTARTS   AGE
 capp-customerapp-56dd4f7d44-hbzm6                           0/1       CreateContainerConfigError   0          3m
 capp-customerapp-56dd4f7d44-vlj8p                           0/1       CreateContainerConfigError   0          3m
-capp-customerapp-56dd4f7d44-z88w6                           0/1       CreateContainerConfigError   0          3m</p>
-
-<pre><code>
-This is because we first need to create the CosmosDB instance AND the binding  before the pods will start up. The pods use a secret that will be generated as part of that process, so they won't start until those are both complete. After a bit of time, they should start up and be happy. You'll notice that a secret was created for you with all the connection information as a result of the binding. You no longer need to manually create that as in Simon's example.
-
-The secret has some extra info in it, because OSBA returns additional information to let you use the connection info in a flexible way. We applied a transform to that data though, so we should have the `MONGODB_URI` key that Simon's example was expecting:
-
+capp-customerapp-56dd4f7d44-z88w6                           0/1       CreateContainerConfigError   0          3m
 </code></pre>
 
-<p>$ k get secret customerdatabasesecret -o yaml
+<p>This is because we first need to create the CosmosDB instance AND the binding  before the pods will start up. The pods use a secret that will be generated as part of that process, so they won&rsquo;t start until those are both complete. After a bit of time, they should start up and be happy. You&rsquo;ll notice that a secret was created for you with all the connection information as a result of the binding. You no longer need to manually create that as in Simon&rsquo;s example.</p>
+
+<p>The secret has some extra info in it, because OSBA returns additional information to let you use the connection info in a flexible way. We applied a transform to that data though, so we should have the <code>MONGODB_URI</code> key that Simon&rsquo;s example was expecting:</p>
+
+<pre><code>$ k get secret customerdatabasesecret -o yaml
 apiVersion: v1
 data:
-  MONGODB_URI: <redacted>
-  host: <redacted>
-  password: <redacted>
+  MONGODB_URI: &lt;redacted&gt;
+  host: &lt;redacted&gt;
+  password: &lt;redacted&gt;
   port: MTAyNTU=
-  uri: <redacted>
-  username: <redacted>
+  uri: &lt;redacted&gt;
+  username: &lt;redacted&gt;
 kind: Secret
 metadata:
   creationTimestamp: 2018-05-07T18:31:47Z
@@ -363,9 +359,9 @@ metadata:
     kind: ServiceBinding
     name: capp-customerapp-cosmosdb-binding
     uid: 1262c90b-5224-11e8-8368-0a580af4019a
-  resourceVersion: &ldquo;1970008&rdquo;
+  resourceVersion: &quot;1970008&quot;
   selfLink: /api/v1/namespaces/tweets/secrets/customerdatabasesecret
-```</p>
+</code></pre>
 
 <p>As you can see from the secret, it was created by Service Catalog! You can now launch the app and it just works!</p>
 
@@ -394,8 +390,14 @@ metadata:
   </div>
   <div class="pure-u-10-24">
     
+    <nav class="next">
+      <a href="https://jeremyrickard.github.io/post/cosmosdb-part2/">Using OSBA With Some CosmosDB Samples - Part Two</a>
+    </nav>
+    
   </div>
   <div class="pure-u-1-24" style="text-align: right;">
+    
+    <a href="https://jeremyrickard.github.io/post/cosmosdb-part2/"><i class="fa fa-chevron-right"></i></a>
     
   </div>
 </div>

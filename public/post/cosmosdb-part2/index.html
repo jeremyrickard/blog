@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="generator" content="Hugo 0.31.1" />
+
+  <title>Using OSBA With Some CosmosDB Samples - Part Two &middot; jeremy doing things</title>
+
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-old-ie-min.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  <!--<![endif]-->
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="/css/side-menu.css">
+  <!--<![endif]-->
+
+  <link rel="stylesheet" href="/css/blackburn.css">
+
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+
+  
+  
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/androidstudio.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/bash.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+  <link rel="shortcut icon" href="https://jeremyrickard.github.io/img/favicon.ico" type="image/x-icon" />
+
+  
+  
+
+</head>
+
+
+<body>
+<div id="layout">
+
+  
+<a href="#menu" id="menuLink" class="menu-link">
+  
+  <span></span>
+</a>
+<div id="menu">
+
+  
+
+  <div class="pure-menu">
+    <ul class="pure-menu-list">
+      
+    </ul>
+  </div>
+
+  <div class="pure-menu social">
+  <ul class="pure-menu-list">
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://twitter.com/jrrickard" target="_blank"><i class="fa fa-twitter-square fa-fw"></i>Twitter</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://github.com/jeremyrickard" target="_blank"><i class="fa fa-github-square fa-fw"></i>GitHub</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+  </ul>
+</div>
+
+
+  <div>
+  <div class="small-print">
+    <small></small>
+  </div>
+  <div class="small-print">
+    <small>Built with&nbsp;<a href="https://gohugo.io/" target="_blank">Hugo</a></small>
+    <small>Theme&nbsp;<a href="https://github.com/yoshiharuyamashita/blackburn" target="_blank">Blackburn</a></small>
+  </div>
+</div>
+
+</div>
+
+
+  <div id="main">
+
+
+<div class="header">
+  <h1>Using OSBA With Some CosmosDB Samples - Part Two</h1>
+  <h2></h2>
+</div>
+<div class="content">
+
+  <div class="post-meta">
+
+  <div>
+    <i class="fa fa-calendar fa-fw"></i>
+    <time>08 May 2018, 10:10</time>
+  </div>
+
+  
+
+  
+
+  
+
+</div>
+
+  <p>The exciting weeks got even more exciting! Both Build and Red Hat Summit are going on. In case you missed it, today we announced <a href="https://azure.microsoft.com/en-us/blog/openshift-on-azure-the-easiest-fully-managed-openshift-in-the-cloud/">managed OpenShift on Azure</a>. Over the last few weeks, we spent a little time adding provisioning parameters to OSBA in an effort to make the experience of using the broker with OpenShift really nice. Seeing this announcement while writing up this second look at some examples of CosmosDB with OSBA was extra nice! I&rsquo;ve been mostly using Helm with these examples, but you could adapt all of them to use OpenShift templates as well. I&rsquo;ll tackle that in another post. You can also use the Service Catalog cli tool <a href="https://github.com/kubernetes-incubator/service-catalog/blob/master/docs/install.md#installing-the-service-catalog-cli">svcat</a> pretty easily with OpenShift and Service Catalog too!</p>
+
+<p><a href="https://jeremyrickard.github.io/post/some-osba-examples/">Part one</a> of this blog series built on work from <a href="https://twitter.com/simonpbennett">simonpbennett</a> and we ended up tweeting a little yesterday after I posted the blog. He was curious in the trade-offs / differences between using CosmosDB via the MongoDB API and via Spring Data for CosmosDB:</p>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Definitely interested in the trade-offs between Spring Data for CosmosDB and the generic MongoDB options. Especially guidance where folks have existing apps/code-bases they want to move-and-improve to Azure.</p>&mdash; simonpbennett (@simonpbennett) <a href="https://twitter.com/simonpbennett/status/993586835132628992?ref_src=twsrc%5Etfw">May 7, 2018</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>The answer to Simon&rsquo;s question really relates to <em>how</em> you want to use the service. CosmosDB lets you interact with the service with several APIs: MongoDB, SQL API (the Spring library we&rsquo;ll talk about in this blog), Graph API, Table API and <a href="https://docs.microsoft.com/en-us/azure/cosmos-db/cassandra-introduction">Cassandra</a>, which is currently in preview. The example used in the last blog post uses the MongoDB API. This is a great way to work with CosmosDB if you&rsquo;re already familiar with MongoDB. The <a href="https://docs.microsoft.com/en-us/azure/cosmos-db/sql-api-introduction">SQL API</a> approach gives you a RESTful API for interacting CosmosDB and allows you to do ad-hoc SQL like queries. This means you can build up SQL-like queries using the <a href="https://docs.microsoft.com/en-us/rest/api/cosmos-db/query-documents">REST API</a>. One notable difference I found in the user experience switching from the MongoDB API to SQL API is that creation of the <code>database</code> was transparent with the MongoDB API but required an explicit creation operation when using SQL API. The predecessor to OSBA, Meta Azure Service Broker, automatically created the database for you when you created the Database Account. OSBA did not do this until v0.11.0.</p>
+
+<p>Interacting with CosmosDB with SQL API is done via the REST API mentioned above, but there are a number of libraries to make this easier. In Java, one option you can use is the <a href="https://github.com/Azure/azure-documentdb-java">Azure DocumentDB libary</a>. You can create a  <code>DocumentClient</code> and use methods like <a href="https://docs.microsoft.com/en-us/java/api/com.microsoft.azure.documentdb._document_client.querycollections#com_microsoft_azure_documentdb__document_client_queryCollections_String_SqlQuerySpec_FeedOptions_">queryCollections</a> to work with the data. The Spring Data for CosmosDB library does much of the above for you by creating a <code>DocumentClient</code> and then allowing you to use normal <a href="https://docs.spring.io/spring-data/commons/docs/current/reference/html/#repositories.query-methods.details">Spring Data query methods</a>. Now it&rsquo;s extremely easy to use Spring Data for CosmosDB with an instance provisioned by OSBA or fall back through to the <code>DocumentClient</code>. When you provision via OSBA, you can directly start using that from your code. To do so, you need the following info:</p>
+
+<pre><code>azure.documentdb.uri=
+azure.documentdb.key=
+azure.documentdb.database=
+</code></pre>
+
+<p>The binding from OSBA will give you all of this information. This means that you can pretty easily deploy applications using the library to Kubernetes (Minikube, AKS, etc) or OpenShift and provision and bind to an instance with OSBA, especially when using Spring Data for CosmosDB!</p>
+
+<p>To demonstrate this on Kubernetes using Service Catalog and OSBA, I&rsquo;ve extracted the <a href="https://github.com/Microsoft/spring-data-cosmosdb/tree/master/samplecode">sample application</a> into a new sample project. You can find it <a href="https://github.com/jeremyrickard/spring-data-cosmosdb-example">here</a>. The sample code is really more for standalone execution, so I needed to make some changes to containerize it.</p>
+
+<p>The first thing I did in this code base was to add some environment variables to the <code>application.properties</code> file that was included.</p>
+
+<pre><code>$ cat src/main/resources/application.properties
+azure.documentdb.uri=${COSMOS_DB_URI}
+azure.documentdb.key=${COSMOS_DB_KEY}
+azure.documentdb.database=${COSMOS_DB_DATABASE}
+</code></pre>
+
+<p>With those set, I containerized the sample code using Bitnami&rsquo;s Java container image. This is obviously required for running on Kubernetes.</p>
+
+<pre><code>$ more Dockerfile
+FROM bitnami/java:1.8-prod
+RUN mkdir /app
+COPY ./build/libs/cosmosdb-demo-0.0.1-SNAPSHOT.jar /app/cosmosdb-demo.jar
+WORKDIR /app
+EXPOSE 8080
+CMD [&quot;java&quot;,&quot;-jar&quot;,&quot;cosmosdb-demo.jar&quot;]
+</code></pre>
+
+<p>I pushed that up to my dockerhub:</p>
+
+<pre><code>docker build -t jeremyrickard/cosmosdb-demo:blog-post .
+docker push jeremyrickard/cosmosdb-demo:blog-post
+</code></pre>
+
+<p>With the container in hand, I was ready to build a Helm chart to deploy the container and handle the interaction with OSBA. This sample currently will create a Deployment, a Service, a ServiceInstance and a ServiceBinding. This is pretty similar to the example we looked at in the last blog post, but the ServiceInstance and way we&rsquo;re consuming the secret generated by the ServiceBinding is a little different.</p>
+
+<p>First, let&rsquo;s look at the ServiceInstance template:</p>
+
+<pre><code>apiVersion: servicecatalog.k8s.io/v1beta1
+kind: ServiceInstance
+metadata:
+  name: {{ .Values.cosmosdb.name }}
+  labels:
+    app: {{ template &quot;fullname&quot; . }}
+    chart: &quot;{{ .Chart.Name }}-{{ .Chart.Version }}&quot;
+    release: &quot;{{ .Release.Name }}&quot;
+    heritage: &quot;{{ .Release.Service }}&quot;
+spec:
+  clusterServiceClassExternalName: azure-cosmosdb-sql
+  clusterServicePlanExternalName: sql-api
+  parameters:
+    location: {{ .Values.cosmosdb.location }}
+    resourceGroup: {{ .Values.cosmosdb.resourceGroup | default .Release.Namespace }}
+    ipFilters:
+      allowedIPRanges:
+        - 0.0.0.0/0
+      allowAccessFromAzure: enabled
+</code></pre>
+
+<p>If you compare this to the ServiceInstance we created for the previous example, we are using a different <code>ClusterServiceClass</code> and <code>ClusterServicePlan</code>. These specifically instruct OSBA to create a CosmosDB instance using the SQL API instead of MongoDB.</p>
+
+<p>Next, in our container spec, we are using the following environment variables from the secret:</p>
+
+<pre><code> env:
+          - name: COSMOS_DB_URI
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.cosmosdb.name }}
+                key: uri
+          - name: COSMOS_DB_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.cosmosdb.name }}
+                key: primaryKey
+          - name: COSMOS_DB_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.cosmosdb.name }}
+                key: databaseName
+</code></pre>
+
+<p>In the previous example, we used the connectionString (which we renamed to uri) alone. Here, we need the databaseName that we also created. These environment variables map back to the <code>application.properties</code> file up above.</p>
+
+<p>Now when we install this chart, we end up with a brand new CosmosDB database account that uses the SQL API, along with a Database created inside of it! Once the instance and binding have been created, the container will startup and load a sample record into our new CosmosDB instance. Make sure you&rsquo;ve installed Service Catalog and OSBA on your cluster! Check out the <a href="https://github.com/Azure/open-service-broker-azure/blob/master/docs/quickstart-minikube.md">Minikube</a> or <a href="https://github.com/Azure/open-service-broker-azure/blob/master/docs/quickstart-aks.md">AKS</a> quick starts if you haven&rsquo;t! Make sure you install with the <code>EXPERIMENTAL</code> mode so you can use the CosmosDB services!</p>
+
+<pre><code>helm install contrib/k8s/charts/spring-data-cosmos-sample -n spring-cosmos-example
+</code></pre>
+
+<p>Once that finishes, you&rsquo;ll have a new ServiceInstance, a ServiceBinding, Secret and a Pod that uses the Secret!</p>
+
+<pre><code>$ k get serviceinstances
+NAME               AGE
+cosmosdb           18h
+</code></pre>
+
+<pre><code>$ k get servicebindings
+NAME               AGE
+cosmosdb           18h
+</code></pre>
+
+<pre><code>$ k get secrets
+NAME                          TYPE                                  DATA      AGE
+cosmosdb                      Opaque                                8         18h
+</code></pre>
+
+<pre><code>$ k get pods
+NAME                                                              READY     STATUS    RESTARTS   AGE
+spring-cosmos-example-spring-data-cosmos-sample-db8c65ccb-h2xdk   1/1       Running   0          18h
+</code></pre>
+
+<p>The most important part of this is the connection from that Pod to our ServiceInstance, via the Binding and the Secret!</p>
+
+<pre><code>Environment:
+      COSMOS_DB_URI:       &lt;set to the key 'uri' in secret 'cosmosdb'&gt;           Optional: false
+      COSMOS_DB_KEY:       &lt;set to the key 'primaryKey' in secret 'cosmosdb'&gt;    Optional: false
+      COSMOS_DB_DATABASE:  &lt;set to the key 'databaseName' in secret 'cosmosdb'&gt;  Optional: false
+</code></pre>
+
+<p>Again, these are the environment variables used in that property file up above.</p>
+
+<p><img src="/images/more-comsos/default-data.png" alt="We have the data" /></p>
+
+<p>The sample code will also expose this via <a href="https://projects.spring.io/spring-data-rest/">Spring Data REST</a>!</p>
+
+<p><img src="/images/more-comsos/do-a-get.png" alt="Do A GET" /></p>
+
+<p>Obviously, that is not all that interesting, so you can POST some data back.</p>
+
+<p><img src="/images/more-comsos/post-to-service.png" alt="Do A POST" /></p>
+
+<p>Now we have a little more data, let&rsquo;s check out the Azure Portal again and do a SQL like query on it. <code>SELECT * from c where c.ID = &quot;cafebabe&quot;</code></p>
+
+<p><img src="/images/more-comsos/sql-like-query.png" alt="SQL Like Query" /></p>
+
+<p>Hopefully this shows how easy it is to deploy an app to Kubernetes and use CosmosDB via OSBA! In both cases, the wiring of the application up to the service is really easy via OSBA and doesn&rsquo;t really require any changes to your application! Environment variables, secrets and Service Catalog make all of this possible. The other thing I think makes this workflow really nice is the fact that I&rsquo;ve done almost nothing that doesn&rsquo;t use Kubernetes tooling. I used Helm here, but for all of these I could use kubectl directly!</p>
+
+
+  
+<div class="prev-next-post pure-g">
+  <div class="pure-u-1-24" style="text-align: left;">
+    
+    <a href="https://jeremyrickard.github.io/post/some-osba-examples/"><i class="fa fa-chevron-left"></i></a>
+    
+  </div>
+  <div class="pure-u-10-24">
+    
+    <nav class="prev">
+      <a href="https://jeremyrickard.github.io/post/some-osba-examples/">Using OSBA With Some CosmosDB Samples - Part One</a>
+    </nav>
+    
+  </div>
+  <div class="pure-u-2-24">
+    &nbsp;
+  </div>
+  <div class="pure-u-10-24">
+    
+  </div>
+  <div class="pure-u-1-24" style="text-align: right;">
+    
+  </div>
+</div>
+
+
+
+  
+
+</div>
+
+</div>
+</div>
+<script src="https://jeremyrickard.github.io/js/ui.js"></script>
+
+
+
+
+
+
+</body>
+</html>
+

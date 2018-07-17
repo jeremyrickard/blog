@@ -6,10 +6,19 @@
     <description>Recent content in Posts on jeremy doing things</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 07 May 2018 10:53:15 -0600</lastBuildDate>
+    <lastBuildDate>Tue, 08 May 2018 10:10:05 -0600</lastBuildDate>
     
 	<atom:link href="https://jeremyrickard.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Using OSBA With Some CosmosDB Samples - Part Two</title>
+      <link>https://jeremyrickard.github.io/post/cosmosdb-part2/</link>
+      <pubDate>Tue, 08 May 2018 10:10:05 -0600</pubDate>
+      
+      <guid>https://jeremyrickard.github.io/post/cosmosdb-part2/</guid>
+      <description>The exciting weeks got even more exciting! Both Build and Red Hat Summit are going on. In case you missed it, today we announced managed OpenShift on Azure. Over the last few weeks, we spent a little time adding provisioning parameters to OSBA in an effort to make the experience of using the broker with OpenShift really nice. Seeing this announcement while writing up this second look at some examples of CosmosDB with OSBA was extra nice!</description>
+    </item>
     
     <item>
       <title>Using OSBA With Some CosmosDB Samples - Part One</title>
